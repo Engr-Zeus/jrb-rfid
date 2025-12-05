@@ -49,8 +49,8 @@ Complete guide to deploy your RFID dashboard on Vercel with GitHub storage.
 5. Configure project:
    - **Framework Preset**: Other
    - **Root Directory**: `./` (root)
-   - **Build Command**: (leave empty or `echo "No build"`)
-   - **Output Directory**: (leave empty)
+   - **Build Command**: `echo "No build required"`
+   - **Output Directory**: `.` (current directory)
 
 6. **Add Environment Variables:**
    Click "Environment Variables" and add:
