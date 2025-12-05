@@ -1,0 +1,21 @@
+{
+  "name": "rfid-dashboard-github-storage",
+  "version": "1.0.0",
+  "description": "Backend service for storing RFID dashboard data in GitHub repository",
+  "main": "github-storage-service.js",
+  "type": "module",
+  "scripts": {
+    "start": "node github-storage-service.js",
+    "dev": "node --watch github-storage-service.js"
+  },
+  "keywords": ["rfid", "github", "storage", "dashboard"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@octokit/rest": "^20.0.2",
+    "express": "^5.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5"
+  }
+}
+

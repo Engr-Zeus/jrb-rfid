@@ -1,0 +1,16 @@
+{
+  "name": "rfid-dashboard-vercel",
+  "version": "1.0.0",
+  "description": "RFID Dashboard with GitHub storage on Vercel",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'No build step required'"
+  },
+  "dependencies": {
+    "@octokit/rest": "^20.0.2"
+  },
+  "devDependencies": {
+    "vercel": "^32.0.0"
+  }
+}
+

@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RFID Card Scanner Dashboard - GitHub Edition</title>
+  <!-- Copy all styles from rfid-dashboard.html -->
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1e40af;
+      --success: #10b981;
+      --danger: #ef4444;
+      --bg-dark: #0f172a;
+      --bg-card: #1e293b;
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --border: #334155;
+      --shadow: rgba(0, 0, 0, 0.3);
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: var(--text-primary);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #60a5fa, #3b82f6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+    }
+
+    .github-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      background: rgba(37, 99, 235, 0.2);
+      border: 1px solid var(--primary);
+      border-radius: 4px;
+      font-size: 0.75rem;
+      margin-left: 10px;
+      color: var(--primary);
+    }
+
+    .github-badge.connected {
+      background: rgba(16, 185, 129, 0.2);
+      border-color: var(--success);
+      color: var(--success);
+    }
+
+    .github-badge.disconnected {
+      background: rgba(239, 68, 68, 0.2);
+      border-color: var(--danger);
+      color: var(--danger);
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .dashboard-3col {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 1200px) {
+      .dashboard-3col {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 968px) {
+      .dashboard {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: var(--bg-card);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 4px 6px var(--shadow);
+      border: 1px solid var(--border);
+    }
+
+    .scan-panel {
+      position: sticky;
+      top: 20px;
+    }
+
+    .input-section {
+      margin-bottom: 24px;
+    }
+
+    .input-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    #rfidInput {
+      width: 100%;
+      padding: 16px;
+      font-size: 1.5rem;
+      background: rgba(15, 23, 42, 0.5);
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-primary);
+      transition: all 0.3s ease;
+      font-family: 'Courier New', monospace;
+      letter-spacing: 2px;
+    }
+
+    #rfidInput:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 12px;
+      padding: 12px;
+      background: rgba(15, 23, 42, 0.5);
+      border-radius: 8px;
+    }
+
+    .status-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--text-secondary);
+      animation: pulse 2s infinite;
+    }
+
+    .status-dot.active {
+      background: var(--success);
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .stat-card {
+      background: rgba(15, 23, 42, 0.5);
+      padding: 16px;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: bold;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .records-section h2 {
+      margin-bottom: 16px;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+    }
+
+    .btn-danger {
+      background: var(--danger);
+    }
+
+    .btn-danger:hover {
+      background: #dc2626;
+    }
+
+    .btn-secondary {
+      background: var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: #475569;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 200px;
+      padding: 10px;
+      background: rgba(15, 23, 42, 0.5);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-primary);
+    }
+
+    .search-box:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .records-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+    }
+
+    .records-table thead {
+      background: rgba(15, 23, 42, 0.7);
+    }
+
+    .records-table th {
+      padding: 12px;
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .records-table td {
+      padding: 14px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .records-table tbody tr {
+      transition: background 0.2s ease;
+    }
+
+    .records-table tbody tr:hover {
+      background: rgba(15, 23, 42, 0.5);
+    }
+
+    .records-table tbody tr.new-scan {
+      animation: highlight 2s ease;
+    }
+
+    @keyframes highlight {
+      0% { background: rgba(37, 99, 235, 0.3); }
+      100% { background: transparent; }
+    }
+
+    .card-id {
+      font-family: 'Courier New', monospace;
+      font-weight: 600;
+      color: var(--primary);
+      letter-spacing: 1px;
+    }
+
+    .timestamp {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-secondary);
+    }
+
+    .empty-state svg {
+      width: 64px;
+      height: 64px;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+
+    .export-btn {
+      margin-left: auto;
+    }
+
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 16px 24px;
+      background: var(--success);
+      color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px var(--shadow);
+      animation: slideIn 0.3s ease;
+      z-index: 1000;
+      display: none;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    .notification.show {
+      display: block;
+    }
+
+    /* Vehicle Profile Styles - Include all from original */
+    .vehicle-profile {
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(59, 130, 246, 0.05));
+      border: 2px solid var(--primary);
+      border-radius: 12px;
+      padding: 24px;
+      margin-top: 20px;
+      animation: slideDown 0.4s ease;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .vehicle-profile.hidden {
+      display: none;
+    }
+
+    .vehicle-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .vehicle-title {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+
+    .vehicle-subtitle {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    .vehicle-info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .info-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .info-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+
+    .info-value {
+      font-size: 1rem;
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    .no-profile {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-secondary);
+    }
+
+    .no-profile svg {
+      width: 48px;
+      height: 48px;
+      margin-bottom: 12px;
+      opacity: 0.5;
+    }
+
+    /* Modal Styles - Include all from original */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-content {
+      background: var(--bg-card);
+      border-radius: 12px;
+      padding: 32px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .modal-header h2 {
+      font-size: 1.5rem;
+      margin: 0;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 0;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .close-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-primary);
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px;
+      background: rgba(15, 23, 42, 0.5);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-primary);
+      font-size: 1rem;
+      font-family: inherit;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      margin-top: 24px;
+    }
+
+    .btn-success {
+      background: var(--success);
+    }
+
+    .btn-success:hover {
+      background: #059669;
+    }
+
+    .manage-vehicles-btn {
+      margin-top: 12px;
+      width: 100%;
+    }
+
+    .vehicles-list {
+      max-height: 400px;
+      overflow-y: auto;
+      margin-top: 16px;
+    }
+
+    .vehicle-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px;
+      background: rgba(15, 23, 42, 0.5);
+      border-radius: 8px;
+      margin-bottom: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .vehicle-item:hover {
+      background: rgba(15, 23, 42, 0.7);
+    }
+
+    .vehicle-item-info {
+      flex: 1;
+    }
+
+    .vehicle-item-id {
+      font-family: 'Courier New', monospace;
+      color: var(--primary);
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .vehicle-item-name {
+      color: var(--text-primary);
+      font-size: 0.85rem;
+      margin-top: 2px;
+    }
+
+    .vehicle-item-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 0.85rem;
+    }
+
+    .config-section {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+
+    .config-input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 8px;
+      background: rgba(15, 23, 42, 0.5);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-primary);
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🔷 RFID Card Scanner Dashboard
+        <span class="github-badge" id="githubStatus">GitHub</span>
+      </h1>
+      <p class="subtitle">Real-time card scanning with GitHub storage</p>
+    </header>
+
+    <!-- Configuration Panel (shown if not configured) -->
+    <div class="card" id="configPanel" style="display: none; margin-bottom: 20px;">
+      <h2>GitHub Storage Configuration</h2>
+      <div class="form-group">
+        <label>Backend API URL</label>
+        <input type="text" id="apiUrlInput" class="config-input" placeholder="https://your-backend.railway.app" />
+        <small style="color: var(--text-secondary); font-size: 0.85rem;">Enter your backend service URL</small>
+      </div>
+      <button class="btn" onclick="saveConfig()">Save Configuration</button>
+    </div>
+
+    <!-- Rest of dashboard HTML same as original -->
+    <!-- For brevity, I'll include key parts and note where to copy from original -->
+    
+    <div class="dashboard">
+      <!-- Scan Panel - Same as original -->
+      <div class="card scan-panel">
+        <div class="input-section">
+          <label class="input-label" for="rfidInput">Scan RFID Card</label>
+          <input 
+            type="text" 
+            id="rfidInput" 
+            autofocus 
+            placeholder="Place cursor here and scan card..."
+            autocomplete="off"
+          />
+          <div class="status-indicator">
+            <div class="status-dot active" id="statusDot"></div>
+            <span id="statusText">Ready to scan</span>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-value" id="totalScans">0</div>
+            <div class="stat-label">Total Scans</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="uniqueCards">0</div>
+            <div class="stat-label">Unique Cards</div>
+          </div>
+        </div>
+
+        <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border);">
+          <h3 style="font-size: 1rem; margin-bottom: 12px; color: var(--text-secondary);">Last Scanned</h3>
+          <div id="lastScan" style="font-family: 'Courier New', monospace; font-size: 1.2rem; color: var(--primary); font-weight: 600;">
+            Waiting for scan...
+          </div>
+        </div>
+
+        <button class="btn btn-secondary manage-vehicles-btn" onclick="openManageVehicles()">
+          Manage Vehicle Profiles
+        </button>
+
+        <div class="config-section">
+          <button class="btn btn-secondary" style="width: 100%;" onclick="toggleConfig()">⚙️ Configure GitHub Sync</button>
+        </div>
+      </div>
+
+      <!-- Vehicle Profile Panel - Same as original -->
+      <div class="card">
+        <h2 style="margin-bottom: 16px; font-size: 1.5rem;">Vehicle Profile</h2>
+        <div id="vehicleProfile" class="vehicle-profile hidden">
+          <!-- Same as original -->
+        </div>
+        <div id="noVehicleProfile" class="no-profile">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+          <p>Scan a card to view vehicle profile</p>
+          <p style="font-size: 0.85rem; margin-top: 8px; opacity: 0.7;">Or add a vehicle profile first</p>
+        </div>
+      </div>
+
+      <!-- Records Panel - Same as original -->
+      <div class="card records-section">
+        <h2>
+          Scan History
+          <button class="btn btn-secondary export-btn" onclick="exportData()">Export CSV</button>
+        </h2>
+        
+        <div class="controls">
+          <input 
+            type="text" 
+            id="searchInput" 
+            class="search-box" 
+            placeholder="Search cards..."
+            oninput="filterRecords()"
+          />
+          <button class="btn btn-danger" onclick="clearAllRecords()">Clear All</button>
+        </div>
+
+        <div style="overflow-x: auto;">
+          <table class="records-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Card ID / Vehicle</th>
+                <th>Timestamp</th>
+                <th>Date</th>
+                <th>Scan Count</th>
+              </tr>
+            </thead>
+            <tbody id="recordsTableBody">
+              <tr>
+                <td colspan="5">
+                  <div class="empty-state">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <p>No scans recorded yet. Scan a card to get started!</p>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modals same as original -->
+  <!-- Include all modals from rfid-dashboard.html -->
+
+  <div class="notification" id="notification">
+    Card scanned successfully!
+  </div>
+
+  <script>
+    // Configuration
+    const API_BASE_URL = localStorage.getItem('github_api_url') || '';
+    
+    // Storage keys
+    const STORAGE_KEY = 'rfid_scans';
+    const VEHICLES_KEY = 'rfid_vehicles';
+    
+    // State
+    let scans = [];
+    let filteredScans = [];
+    let cardCounts = {};
+    let vehicles = {};
+    let currentEditingCardId = null;
+    let githubSyncEnabled = false;
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      checkGitHubConnection();
+      loadScans();
+      loadVehicles();
+      setupInputListener();
+      updateDisplay();
+      keepInputFocused();
+      
+      // Show config if API URL not set
+      if (!API_BASE_URL) {
+        document.getElementById('configPanel').style.display = 'block';
+      }
+    });
+
+    // Check GitHub connection
+    async function checkGitHubConnection() {
+      if (!API_BASE_URL) {
+        updateGitHubStatus('disconnected', 'Not configured');
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/health`);
+        const data = await response.json();
+        if (data.status === 'ok') {
+          githubSyncEnabled = true;
+          updateGitHubStatus('connected', 'Synced');
+          // Sync data from GitHub
+          syncFromGitHub();
+        } else {
+          updateGitHubStatus('disconnected', 'Error');
+        }
+      } catch (error) {
+        updateGitHubStatus('disconnected', 'Offline');
+        githubSyncEnabled = false;
+      }
+    }
+
+    function updateGitHubStatus(status, text) {
+      const badge = document.getElementById('githubStatus');
+      badge.className = `github-badge ${status}`;
+      badge.textContent = `GitHub: ${text}`;
+    }
+
+    // Sync functions
+    async function syncToGitHub() {
+      if (!githubSyncEnabled) return;
+
+      try {
+        // Sync scans
+        await fetch(`${API_BASE_URL}/api/scans`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ scans })
+        });
+
+        // Sync vehicles
+        await fetch(`${API_BASE_URL}/api/vehicles`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ vehicles })
+        });
+      } catch (error) {
+        console.error('GitHub sync error:', error);
+      }
+    }
+
+    async function syncFromGitHub() {
+      if (!githubSyncEnabled) return;
+
+      try {
+        // Load scans from GitHub
+        const scansRes = await fetch(`${API_BASE_URL}/api/scans`);
+        const scansData = await scansRes.json();
+        if (scansData.scans && scansData.scans.length > 0) {
+          scans = scansData.scans;
+          // Rebuild card counts
+          cardCounts = {};
+          scans.forEach(scan => {
+            cardCounts[scan.cardId] = (cardCounts[scan.cardId] || 0) + 1;
+          });
+        }
+
+        // Load vehicles from GitHub
+        const vehiclesRes = await fetch(`${API_BASE_URL}/api/vehicles`);
+        const vehiclesData = await vehiclesRes.json();
+        if (vehiclesData.vehicles) {
+          vehicles = vehiclesData.vehicles;
+        }
+
+        // Save to localStorage as backup
+        saveScans();
+        saveVehicles();
+        updateDisplay();
+      } catch (error) {
+        console.error('GitHub load error:', error);
+      }
+    }
+
+    // Configuration functions
+    function toggleConfig() {
+      const panel = document.getElementById('configPanel');
+      panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function saveConfig() {
+      const url = document.getElementById('apiUrlInput').value.trim();
+      if (url) {
+        localStorage.setItem('github_api_url', url);
+        window.location.reload();
+      }
+    }
+
+    // Include all other functions from original rfid-dashboard.html
+    // (loadScans, saveScans, loadVehicles, saveVehicles, processScan, etc.)
+    // But modify saveScans and saveVehicles to also sync to GitHub
+
+    // Modified save functions
+    function saveScans() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(scans));
+      if (githubSyncEnabled) {
+        syncToGitHub();
+      }
+    }
+
+    function saveVehicles() {
+      localStorage.setItem(VEHICLES_KEY, JSON.stringify(vehicles));
+      if (githubSyncEnabled) {
+        syncToGitHub();
+      }
+    }
+
+    // Note: You'll need to copy all other functions from rfid-dashboard.html
+    // This is a template showing the GitHub integration points
+  </script>
+</body>
+</html>
+
