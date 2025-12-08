@@ -1,0 +1,129 @@
+{
+  "stakeholders": [
+    {
+      "id": "stk-001",
+      "name": "Federal Ministry of Transportation",
+      "type": "government",
+      "role": "Regulatory Authority",
+      "contact": {
+        "email": "contact@fmot.gov.ng",
+        "phone": "+234-800-123-4567",
+        "address": "Federal Secretariat, Abuja"
+      },
+      "status": "active",
+      "partnershipStartDate": "2023-01-15",
+      "contribution": "Policy oversight and regulatory compliance",
+      "lastContact": "2024-01-10",
+      "createdAt": "2023-01-15T00:00:00Z",
+      "updatedAt": "2024-01-10T10:30:00Z"
+    },
+    {
+      "id": "stk-002",
+      "name": "ABC Haulage Services Ltd",
+      "type": "haulage",
+      "role": "Transport Operator",
+      "contact": {
+        "email": "info@abchaulage.com",
+        "phone": "+234-803-234-5678",
+        "address": "Lagos Industrial Estate"
+      },
+      "status": "active",
+      "partnershipStartDate": "2023-03-20",
+      "contribution": "Vehicle fleet management and operations",
+      "fleetSize": 450,
+      "lastContact": "2024-01-12",
+      "createdAt": "2023-03-20T00:00:00Z",
+      "updatedAt": "2024-01-12T14:20:00Z"
+    },
+    {
+      "id": "stk-003",
+      "name": "XYZ Logistics Group",
+      "type": "haulage",
+      "role": "Transport Operator",
+      "contact": {
+        "email": "contact@xyzlogistics.com",
+        "phone": "+234-802-345-6789",
+        "address": "Port Harcourt Terminal"
+      },
+      "status": "active",
+      "partnershipStartDate": "2023-05-10",
+      "contribution": "Inter-state freight operations",
+      "fleetSize": 320,
+      "lastContact": "2024-01-11",
+      "createdAt": "2023-05-10T00:00:00Z",
+      "updatedAt": "2024-01-11T09:15:00Z"
+    },
+    {
+      "id": "stk-004",
+      "name": "Infrastructure Development Bank",
+      "type": "funding",
+      "role": "Financial Partner",
+      "contact": {
+        "email": "ppp@idb.gov.ng",
+        "phone": "+234-809-456-7890",
+        "address": "Central Business District, Abuja"
+      },
+      "status": "active",
+      "partnershipStartDate": "2022-11-01",
+      "contribution": "Project financing and capital investment",
+      "investmentAmount": 5000000000,
+      "lastContact": "2024-01-08",
+      "createdAt": "2022-11-01T00:00:00Z",
+      "updatedAt": "2024-01-08T11:45:00Z"
+    },
+    {
+      "id": "stk-005",
+      "name": "TechSolutions Inc",
+      "type": "tech",
+      "role": "Technology Partner",
+      "contact": {
+        "email": "support@techsolutions.ng",
+        "phone": "+234-701-567-8901",
+        "address": "Victoria Island, Lagos"
+      },
+      "status": "active",
+      "partnershipStartDate": "2023-02-01",
+      "contribution": "RFID system development and maintenance",
+      "lastContact": "2024-01-13",
+      "createdAt": "2023-02-01T00:00:00Z",
+      "updatedAt": "2024-01-13T16:00:00Z"
+    },
+    {
+      "id": "stk-006",
+      "name": "State Transport Authority - Lagos",
+      "type": "government",
+      "role": "State Regulatory Body",
+      "contact": {
+        "email": "info@lagos-transport.gov.ng",
+        "phone": "+234-807-678-9012",
+        "address": "Ikeja, Lagos State"
+      },
+      "status": "active",
+      "partnershipStartDate": "2023-04-15",
+      "contribution": "State-level enforcement and coordination",
+      "lastContact": "2024-01-09",
+      "createdAt": "2023-04-15T00:00:00Z",
+      "updatedAt": "2024-01-09T13:30:00Z"
+    },
+    {
+      "id": "stk-007",
+      "name": "Premium Freight Services",
+      "type": "haulage",
+      "role": "Transport Operator",
+      "contact": {
+        "email": "admin@premiumfreight.com",
+        "phone": "+234-805-789-0123",
+        "address": "Kano Commercial Hub"
+      },
+      "status": "active",
+      "partnershipStartDate": "2023-06-01",
+      "contribution": "Northern region operations",
+      "fleetSize": 280,
+      "lastContact": "2024-01-14",
+      "createdAt": "2023-06-01T00:00:00Z",
+      "updatedAt": "2024-01-14T10:00:00Z"
+    }
+  ],
+  "lastUpdated": "2024-01-15T15:00:00Z"
+}
+

@@ -1,0 +1,55 @@
+{
+  "totalScansToday": 1247,
+  "scansThisWeek": 8234,
+  "activeCheckpoints": 700,
+  "checkpointUptime": {
+    "total": 700,
+    "online": 687,
+    "offline": 13,
+    "uptimePercentage": 98.14
+  },
+  "errorLogs": [
+    {
+      "id": "err-001",
+      "timestamp": "2024-01-15T14:32:15Z",
+      "checkpoint": "CP-234",
+      "severity": "warning",
+      "message": "RFID reader timeout - checkpoint CP-234",
+      "resolved": false
+    },
+    {
+      "id": "err-002",
+      "timestamp": "2024-01-15T13:45:22Z",
+      "checkpoint": "CP-189",
+      "severity": "error",
+      "message": "Network connectivity issue - checkpoint CP-189",
+      "resolved": true
+    },
+    {
+      "id": "err-003",
+      "timestamp": "2024-01-15T12:18:07Z",
+      "checkpoint": "CP-456",
+      "severity": "info",
+      "message": "Maintenance scheduled - checkpoint CP-456",
+      "resolved": false
+    },
+    {
+      "id": "err-004",
+      "timestamp": "2024-01-15T11:05:33Z",
+      "checkpoint": "CP-123",
+      "severity": "warning",
+      "message": "Low battery warning - checkpoint CP-123",
+      "resolved": false
+    },
+    {
+      "id": "err-005",
+      "timestamp": "2024-01-15T10:22:41Z",
+      "checkpoint": "CP-567",
+      "severity": "error",
+      "message": "Database connection failed - checkpoint CP-567",
+      "resolved": true
+    }
+  ],
+  "lastUpdated": "2024-01-15T15:00:00Z"
+}
+

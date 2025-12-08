@@ -606,15 +606,18 @@
 <body>
   <div class="container">
     <header>
-      <h1>🔷 RFID Card Scanner Dashboard</h1>
-      <p class="subtitle">Real-time card scanning and record management</p>
+      <div style="display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 10px;">
+        <img src="logo.png" alt="Logo" style="height: 60px; width: auto;" />
+        <h1 style="margin: 0;">Consolidated Haulage System</h1>
+      </div>
+      <p class="subtitle">Real-time Automated Haulage Tax System</p>
     </header>
 
     <div class="dashboard">
       <!-- Scan Panel -->
       <div class="card scan-panel">
         <div class="input-section">
-          <label class="input-label" for="rfidInput">Scan RFID Card</label>
+          <label class="input-label" for="rfidInput">Scan Vehicle / Driver Card</label>
           <input 
             type="text" 
             id="rfidInput" 
@@ -676,20 +679,66 @@
               <div class="info-value" id="vehicleMakeModel">-</div>
             </div>
             <div class="info-item">
-              <div class="info-label">Color</div>
-              <div class="info-value" id="vehicleColor">-</div>
+              <div class="info-label">Assigned Driver</div>
+              <div class="info-value" id="vehicleDriver">-</div>
             </div>
             <div class="info-item">
-              <div class="info-label">Owner Name</div>
-              <div class="info-value" id="vehicleOwner">-</div>
+              <div class="info-label">Haulage Company</div>
+              <div class="info-value" id="vehicleHaulage">-</div>
             </div>
             <div class="info-item">
               <div class="info-label">Owner Phone</div>
               <div class="info-value" id="vehiclePhone">-</div>
             </div>
             <div class="info-item" style="grid-column: 1 / -1;">
+              <div class="info-label">Vehicle Photo</div>
+              <div class="info-value" id="vehiclePhoto">
+                <img id="vehiclePhotoImg" src="" alt="Vehicle Photo" style="max-width: 200px; max-height: 150px; border-radius: 8px; display: none;" />
+                <span id="vehiclePhotoPlaceholder">No photo available</span>
+              </div>
+            </div>
+            <div class="info-item" style="grid-column: 1 / -1;">
               <div class="info-label">Notes</div>
               <div class="info-value" id="vehicleNotes" style="white-space: pre-wrap;">-</div>
+            </div>
+          </div>
+          
+          <!-- Last 10 Scans Table -->
+          <div style="margin-top: 24px; padding-top: 24px; border-top: 2px solid var(--border);">
+            <h3 style="font-size: 1rem; margin-bottom: 16px; color: var(--text-secondary);">Last 10 Scans</h3>
+            <div style="overflow-x: auto;">
+              <table class="records-table" style="font-size: 0.85rem;">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="vehicleLastScans">
+                  <tr><td colspan="3" style="text-align: center; color: var(--text-secondary);">No scans yet</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
+          <!-- Compliance Status & Control -->
+          <div style="margin-top: 24px; padding-top: 24px; border-top: 2px solid var(--border);">
+            <h3 style="font-size: 1rem; margin-bottom: 16px; color: var(--text-secondary);">Compliance Status</h3>
+            <div id="vehicleComplianceStatus" style="margin-bottom: 16px;">
+              Loading compliance status...
+            </div>
+            <div style="display: flex; gap: 12px;">
+              <button class="btn btn-success" id="makeCompliantBtn" onclick="setVehicleCompliance(true)" style="display: none;">Mark as Compliant</button>
+              <button class="btn btn-danger" id="makeNonCompliantBtn" onclick="setVehicleCompliance(false)" style="display: none;">Mark as Non-Compliant</button>
+            </div>
+          </div>
+          
+          <!-- Compliance History -->
+          <div style="margin-top: 24px; padding-top: 24px; border-top: 2px solid var(--border);">
+            <h3 style="font-size: 1rem; margin-bottom: 16px; color: var(--text-secondary);">Compliance History</h3>
+            <div id="vehicleComplianceHistory" style="color: var(--text-secondary);">
+              Loading compliance data...
             </div>
           </div>
         </div>
@@ -745,8 +794,177 @@
             </tbody>
           </table>
         </div>
+        <div id="viewAllScansContainer" style="margin-top: 12px; text-align: center; display: none;">
+          <button class="btn btn-secondary" onclick="toggleShowAllScans()" id="viewAllScansBtn">View All Scans</button>
+        </div>
       </div>
     </div>
+
+    <!-- New PPP Compliance Sections -->
+    
+    <!-- System Activity Monitor -->
+    <div class="card" style="margin-bottom: 20px;">
+      <h2 style="margin-bottom: 16px; font-size: 1.5rem;">System Activity Monitor</h2>
+      <div class="dashboard-3col">
+        <div class="stat-card">
+          <div class="stat-value" id="scansToday">0</div>
+          <div class="stat-label">Scans Today</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="scansThisWeek">0</div>
+          <div class="stat-label">Scans This Week</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="activeCheckpoints">700</div>
+          <div class="stat-label">Active Checkpoints</div>
+        </div>
+      </div>
+      <div style="margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+        <div>
+          <h3 style="font-size: 0.9rem; margin-bottom: 12px; color: var(--text-secondary);">Checkpoint Uptime</h3>
+          <div style="background: rgba(15, 23, 42, 0.5); padding: 16px; border-radius: 8px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+              <span style="color: var(--text-secondary);">Online:</span>
+              <span style="color: var(--success); font-weight: 600;" id="checkpointsOnline">0</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+              <span style="color: var(--text-secondary);">Offline:</span>
+              <span style="color: var(--danger); font-weight: 600;" id="checkpointsOffline">0</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span style="color: var(--text-secondary);">Uptime:</span>
+              <span style="color: var(--primary); font-weight: 600;" id="checkpointUptime">0%</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h3 style="font-size: 0.9rem; margin-bottom: 12px; color: var(--text-secondary);">Recent System Errors</h3>
+          <div id="systemErrorLogs" style="max-height: 200px; overflow-y: auto; background: rgba(15, 23, 42, 0.5); padding: 12px; border-radius: 8px;">
+            Loading...
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Compliance Insights -->
+    <div class="dashboard">
+      <div class="card">
+        <h2 style="margin-bottom: 16px; font-size: 1.5rem;">Compliance Insights</h2>
+        <div style="text-align: center; margin-bottom: 24px;">
+          <div class="stat-value" style="font-size: 3rem; color: var(--success);" id="overallCompliance">0%</div>
+          <div class="stat-label">Overall Compliance Rate</div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
+          <div class="stat-card">
+            <div class="stat-value" id="totalVehiclesCompliance">0</div>
+            <div class="stat-label">Total Vehicles</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" style="color: var(--success);" id="compliantVehiclesCount">0</div>
+            <div class="stat-label">Compliant</div>
+          </div>
+        </div>
+        <div>
+          <h3 style="font-size: 0.9rem; margin-bottom: 12px; color: var(--text-secondary);">Non-Compliant Vehicles</h3>
+          <div id="nonCompliantList" style="max-height: 300px; overflow-y: auto;">
+            Loading...
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <h2 style="margin-bottom: 16px; font-size: 1.5rem;">7-Day Compliance Trend</h2>
+        <div id="complianceTrendChart" style="height: 300px; display: flex; align-items: center; justify-content: center; background: rgba(15, 23, 42, 0.5); border-radius: 8px; color: var(--text-secondary);">
+          <div>Chart visualization placeholder</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stakeholder Management -->
+    <div class="card" style="margin-bottom: 20px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h2 style="font-size: 1.5rem; margin: 0;">Stakeholder Management</h2>
+        <button class="btn" onclick="openAddStakeholder()">+ Add Stakeholder</button>
+      </div>
+      <div class="controls" style="margin-bottom: 16px;">
+        <input type="text" id="stakeholderSearch" class="search-box" placeholder="Search stakeholders..." oninput="filterStakeholders()" />
+        <select id="stakeholderTypeFilter" class="search-box" style="max-width: 200px;" onchange="filterStakeholders()">
+          <option value="">All Types</option>
+          <option value="government">Government</option>
+          <option value="haulage">Haulage</option>
+          <option value="funding">Funding</option>
+          <option value="tech">Tech</option>
+        </select>
+      </div>
+      <div id="stakeholdersList" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px;">
+        Loading stakeholders...
+      </div>
+    </div>
+
+    <!-- Revenue & Cost-Benefit Panel -->
+    <div class="dashboard">
+      <div class="card">
+        <h2 style="margin-bottom: 16px; font-size: 1.5rem;">Revenue Overview</h2>
+        <div style="margin-bottom: 24px;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+            <span style="color: var(--text-secondary);">Current Month:</span>
+            <span style="font-size: 1.5rem; font-weight: bold; color: var(--primary);" id="currentMonthRevenue">₦0</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+            <span style="color: var(--text-secondary);">Previous Month:</span>
+            <span style="font-size: 1.2rem; color: var(--text-primary);" id="previousMonthRevenue">₦0</span>
+          </div>
+          <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border);">
+            <h3 style="font-size: 0.9rem; margin-bottom: 12px; color: var(--text-secondary);">Revenue Distribution (Per Compliant Trip: ₦15,500)</h3>
+            <div style="background: rgba(15, 23, 42, 0.5); padding: 16px; border-radius: 8px;">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                <span style="color: var(--text-secondary);">Federal Government (20%):</span>
+                <span style="color: var(--success); font-weight: 600;" id="federalShare">₦0</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                <span style="color: var(--text-secondary);">Originating State (50%):</span>
+                <span style="color: var(--primary); font-weight: 600;" id="originStateShare">₦0</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                <span style="color: var(--text-secondary);">Destination State (20%):</span>
+                <span style="color: var(--primary); font-weight: 600;" id="destinationStateShare">₦0</span>
+              </div>
+              <div style="display: flex; justify-content: space-between;">
+                <span style="color: var(--text-secondary);">Tech Partner (10%):</span>
+                <span style="color: var(--primary); font-weight: 600;" id="techPartnerShare">₦0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h3 style="font-size: 0.9rem; margin-bottom: 12px; color: var(--text-secondary);">Revenue Breakdown</h3>
+          <div style="background: rgba(15, 23, 42, 0.5); padding: 16px; border-radius: 8px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+              <span>Compliant Trips:</span>
+              <span id="compliantTripsCount">0</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+              <span>Fee per Trip:</span>
+              <span>₦15,500</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+              <span>Total Haulage Fees:</span>
+              <span id="revenueHaulage">₦0</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span>Penalties:</span>
+              <span id="revenuePenalties">₦0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <h2 style="margin-bottom: 16px; font-size: 1.5rem;">12-Month Forecast</h2>
+        <div id="revenueForecastChart" style="height: 300px; display: flex; align-items: center; justify-content: center; background: rgba(15, 23, 42, 0.5); border-radius: 8px; color: var(--text-secondary);">
+          <div>Forecast chart visualization placeholder</div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <div class="notification" id="notification">
@@ -791,12 +1009,28 @@
           <input type="text" id="formMakeModel" placeholder="e.g., Toyota Camry 2020" />
         </div>
         <div class="form-group">
-          <label for="formColor">Color</label>
-          <input type="text" id="formColor" placeholder="e.g., White" />
+          <label for="formDriver">Assigned Driver</label>
+          <select id="formDriver">
+            <option value="">Select driver...</option>
+          </select>
         </div>
         <div class="form-group">
-          <label for="formOwner">Owner Name</label>
-          <input type="text" id="formOwner" placeholder="Owner's full name" />
+          <label for="formHaulage">Haulage Company</label>
+          <select id="formHaulage">
+            <option value="">Select company...</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="formOriginState">Originating State *</label>
+          <input type="text" id="formOriginState" required placeholder="e.g., Lagos" />
+        </div>
+        <div class="form-group">
+          <label for="formDestinationState">Destination State *</label>
+          <input type="text" id="formDestinationState" required placeholder="e.g., Abuja" />
+        </div>
+        <div class="form-group">
+          <label for="formPhoto">Vehicle Photo URL</label>
+          <input type="url" id="formPhoto" placeholder="https://example.com/photo.jpg" />
         </div>
         <div class="form-group">
           <label for="formPhone">Owner Phone</label>
@@ -832,6 +1066,56 @@
     </div>
   </div>
 
+  <!-- Stakeholder Modal -->
+  <div class="modal" id="stakeholderModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="stakeholderModalTitle">Add Stakeholder</h2>
+        <button class="close-btn" onclick="closeStakeholderModal()">&times;</button>
+      </div>
+      <form id="stakeholderForm" onsubmit="saveStakeholder(event)">
+        <div class="form-group">
+          <label for="stakeholderName">Name *</label>
+          <input type="text" id="stakeholderName" required placeholder="Stakeholder name" />
+        </div>
+        <div class="form-group">
+          <label for="stakeholderType">Type *</label>
+          <select id="stakeholderType" required>
+            <option value="">Select type...</option>
+            <option value="government">Government</option>
+            <option value="haulage">Haulage</option>
+            <option value="funding">Funding</option>
+            <option value="tech">Tech</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="stakeholderRole">Role</label>
+          <input type="text" id="stakeholderRole" placeholder="e.g., Regulatory Authority" />
+        </div>
+        <div class="form-group">
+          <label for="stakeholderEmail">Email</label>
+          <input type="email" id="stakeholderEmail" placeholder="contact@example.com" />
+        </div>
+        <div class="form-group">
+          <label for="stakeholderPhone">Phone</label>
+          <input type="tel" id="stakeholderPhone" placeholder="+234-800-123-4567" />
+        </div>
+        <div class="form-group">
+          <label for="stakeholderAddress">Address</label>
+          <textarea id="stakeholderAddress" placeholder="Full address"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="stakeholderContribution">Contribution</label>
+          <textarea id="stakeholderContribution" placeholder="Description of contribution"></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" onclick="closeStakeholderModal()">Cancel</button>
+          <button type="submit" class="btn btn-success">Save Stakeholder</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <script>
     // Configuration - Auto-detect API URL (works with Vercel)
     const API_BASE_URL = window.location.origin; // Same domain as dashboard
@@ -847,6 +1131,14 @@
     let vehicles = {}; // Map of cardId -> vehicle profile
     let currentEditingCardId = null;
     let githubSyncEnabled = false;
+    let showAllScans = false; // Track if showing all scans or just 5
+
+    // Additional data stores
+    let systemActivity = null;
+    let complianceData = null;
+    let stakeholders = [];
+    let revenueData = null;
+    let drivers = [];
 
     // Initialize
     document.addEventListener('DOMContentLoaded', async () => {
@@ -856,10 +1148,29 @@
       // Load data (from GitHub if available, otherwise localStorage)
       await loadScans();
       await loadVehicles();
+      await loadAllData();
+      
+      // Load compliance data from localStorage if available
+      try {
+        const storedCompliance = localStorage.getItem('compliance_data');
+        if (storedCompliance) {
+          complianceData = JSON.parse(storedCompliance);
+          displayComplianceData();
+        }
+      } catch (error) {
+        console.error('Failed to load compliance data from localStorage:', error);
+      }
       
       setupInputListener();
       updateDisplay();
       keepInputFocused();
+      
+      // Load drivers and haulage companies for form dropdowns
+      await loadDrivers();
+      await loadHaulageCompanies();
+      
+      // Calculate and display revenue
+      calculateAndDisplayRevenue();
       
       // Auto-fill card ID from input when modal opens
       document.getElementById('rfidInput').addEventListener('input', (e) => {
@@ -1036,6 +1347,9 @@
         datetime: now.toISOString()
       };
 
+      // Check if this is first time scan (no vehicle profile exists)
+      const isFirstTime = !vehicles[cardId];
+      
       // Add to scans array (most recent first)
       scans.unshift(scan);
       
@@ -1058,10 +1372,33 @@
         }
       }
 
+      // If first time scan, prompt for vehicle registration
+      if (isFirstTime) {
+        showNotification(`First time scan detected: ${cardId}. Please register vehicle.`);
+        setTimeout(() => {
+          openAddVehicle(cardId);
+        }, 500);
+        updateDisplay();
+        return;
+      }
+
+      // For subsequent scans, check compliance and display
+      const vehicle = vehicles[cardId];
+      if (vehicle) {
+        const isCompliant = checkVehicleCompliance(cardId);
+        displayVehicleProfile(cardId);
+        showNotification(`Card scanned: ${cardId} - ${isCompliant ? 'Compliant ✓' : 'Non-Compliant ✗'}`);
+      } else {
+        displayVehicleProfile(cardId);
+        showNotification(`Card scanned: ${cardId}`);
+      }
+
       // Update display
       updateDisplay();
-      displayVehicleProfile(cardId);
-      showNotification(`Card scanned: ${cardId}`);
+      
+      // Update compliance and revenue after scan
+      displayComplianceData();
+      calculateAndDisplayRevenue();
 
       // Highlight new row
       setTimeout(() => {
@@ -1079,6 +1416,24 @@
         filteredScans = [...scans];
         renderTable();
       }
+    }
+
+    // Check if vehicle is compliant
+    function checkVehicleCompliance(cardId) {
+      if (!complianceData) {
+        // Initialize if not exists
+        complianceData = {
+          overallCompliance: 0,
+          totalVehicles: 0,
+          compliantVehicles: 0,
+          nonCompliantVehicles: 0,
+          nonCompliantList: [],
+          sevenDayTrend: []
+        };
+      }
+      if (!complianceData.nonCompliantList) return true;
+      const nonCompliant = complianceData.nonCompliantList.find(v => v.cardId === cardId);
+      return !nonCompliant;
     }
 
     // Update all displays
@@ -1105,10 +1460,101 @@
         document.getElementById('vehiclePlate').textContent = vehicle.plate || '-';
         document.getElementById('vehicleType').textContent = vehicle.type || '-';
         document.getElementById('vehicleMakeModel').textContent = vehicle.makeModel || '-';
-        document.getElementById('vehicleColor').textContent = vehicle.color || '-';
-        document.getElementById('vehicleOwner').textContent = vehicle.owner || '-';
         document.getElementById('vehiclePhone').textContent = vehicle.phone || '-';
         document.getElementById('vehicleNotes').textContent = vehicle.notes || '-';
+
+        // Display driver
+        const driverId = vehicle.driverId;
+        const driver = drivers.find(d => d.id === driverId);
+        document.getElementById('vehicleDriver').textContent = driver ? `${driver.name} (${driver.licenseNumber})` : '-';
+        
+        // Display haulage company
+        document.getElementById('vehicleHaulage').textContent = vehicle.haulageCompany || '-';
+        
+        // Display photo
+        const photoImg = document.getElementById('vehiclePhotoImg');
+        const photoPlaceholder = document.getElementById('vehiclePhotoPlaceholder');
+        if (vehicle.photo) {
+          photoImg.src = vehicle.photo;
+          photoImg.style.display = 'block';
+          photoPlaceholder.style.display = 'none';
+        } else {
+          photoImg.style.display = 'none';
+          photoPlaceholder.style.display = 'inline';
+        }
+        
+        // Display last 10 scans with compliance status
+        const vehicleScans = scans.filter(s => s.cardId === cardId).slice(0, 10);
+        const scansTbody = document.getElementById('vehicleLastScans');
+        if (vehicleScans.length > 0) {
+          scansTbody.innerHTML = vehicleScans.map(scan => {
+            const wasCompliant = checkVehicleCompliance(cardId);
+            return `
+              <tr>
+                <td>${scan.date}</td>
+                <td>${scan.timestamp}</td>
+                <td><span style="padding: 2px 6px; background: ${wasCompliant ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)'}; color: ${wasCompliant ? 'var(--success)' : 'var(--danger)'}; border-radius: 4px; font-size: 0.75rem;">${wasCompliant ? 'Compliant' : 'Non-Compliant'}</span></td>
+              </tr>
+            `;
+          }).join('');
+        } else {
+          scansTbody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: var(--text-secondary);">No scans yet</td></tr>';
+        }
+        
+        // Display compliance status and controls
+        const complianceStatusDiv = document.getElementById('vehicleComplianceStatus');
+        const makeCompliantBtn = document.getElementById('makeCompliantBtn');
+        const makeNonCompliantBtn = document.getElementById('makeNonCompliantBtn');
+        const nonCompliant = complianceData?.nonCompliantList?.find(v => v.cardId === cardId);
+        const isCompliant = !nonCompliant;
+        
+        if (isCompliant) {
+          complianceStatusDiv.innerHTML = `
+            <div style="padding: 12px; background: rgba(16, 185, 129, 0.1); border-left: 3px solid var(--success); border-radius: 6px;">
+              <div style="font-weight: 600; color: var(--success); margin-bottom: 4px;">✓ Compliant</div>
+              <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;">Vehicle is in good standing</div>
+            </div>
+          `;
+          makeCompliantBtn.style.display = 'none';
+          makeNonCompliantBtn.style.display = 'inline-block';
+        } else {
+          complianceStatusDiv.innerHTML = `
+            <div style="padding: 12px; background: rgba(239, 68, 68, 0.1); border-left: 3px solid var(--danger); border-radius: 6px;">
+              <div style="font-weight: 600; color: var(--danger); margin-bottom: 4px;">✗ Non-Compliant</div>
+              <div style="font-size: 0.85rem; margin-bottom: 4px;">Reason: ${nonCompliant.reason || 'Not specified'}</div>
+              <div style="font-size: 0.75rem; color: var(--text-secondary);">${nonCompliant.daysNonCompliant || 0} days non-compliant</div>
+            </div>
+          `;
+          makeCompliantBtn.style.display = 'inline-block';
+          makeNonCompliantBtn.style.display = 'none';
+        }
+        
+        // Store card ID for compliance toggle
+        makeCompliantBtn.setAttribute('data-card-id', cardId);
+        makeNonCompliantBtn.setAttribute('data-card-id', cardId);
+
+        // Display compliance history
+        const complianceDiv = document.getElementById('vehicleComplianceHistory');
+        const complianceHistory = vehicle.complianceHistory || [];
+        if (complianceHistory.length > 0) {
+          complianceDiv.innerHTML = complianceHistory.slice(0, 5).map(entry => `
+            <div style="padding: 8px; margin-bottom: 8px; background: rgba(15, 23, 42, 0.5); border-radius: 6px; font-size: 0.85rem;">
+              <div style="display: flex; justify-content: space-between;">
+                <span style="color: ${entry.status === 'compliant' ? 'var(--success)' : 'var(--danger)'};">
+                  ${entry.status === 'compliant' ? '✓' : '✗'} ${entry.status.charAt(0).toUpperCase() + entry.status.slice(1)}
+                </span>
+                <span style="color: var(--text-secondary); font-size: 0.75rem;">${new Date(entry.date).toLocaleDateString()}</span>
+              </div>
+              ${entry.reason ? `<div style="color: var(--text-secondary); font-size: 0.75rem; margin-top: 4px;">${entry.reason}</div>` : ''}
+            </div>
+          `).join('');
+        } else {
+          complianceDiv.innerHTML = `
+            <div style="padding: 12px; background: rgba(15, 23, 42, 0.5); border-radius: 6px; font-size: 0.85rem; color: var(--text-secondary);">
+              No compliance history available
+            </div>
+          `;
+        }
 
         // Store current card ID for editing
         profileDiv.setAttribute('data-card-id', cardId);
@@ -1166,8 +1612,11 @@
       document.getElementById('formPlate').value = vehicle.plate || '';
       document.getElementById('formType').value = vehicle.type || '';
       document.getElementById('formMakeModel').value = vehicle.makeModel || '';
-      document.getElementById('formColor').value = vehicle.color || '';
-      document.getElementById('formOwner').value = vehicle.owner || '';
+      document.getElementById('formDriver').value = vehicle.driverId || '';
+      document.getElementById('formHaulage').value = vehicle.haulageCompany || '';
+      document.getElementById('formOriginState').value = vehicle.originState || '';
+      document.getElementById('formDestinationState').value = vehicle.destinationState || '';
+      document.getElementById('formPhoto').value = vehicle.photo || '';
       document.getElementById('formPhone').value = vehicle.phone || '';
       document.getElementById('formNotes').value = vehicle.notes || '';
 
@@ -1205,10 +1654,14 @@
         plate: document.getElementById('formPlate').value.trim(),
         type: document.getElementById('formType').value.trim(),
         makeModel: document.getElementById('formMakeModel').value.trim(),
-        color: document.getElementById('formColor').value.trim(),
-        owner: document.getElementById('formOwner').value.trim(),
+        driverId: document.getElementById('formDriver').value,
+        haulageCompany: document.getElementById('formHaulage').value,
+        originState: document.getElementById('formOriginState').value.trim(),
+        destinationState: document.getElementById('formDestinationState').value.trim(),
+        photo: document.getElementById('formPhoto').value.trim(),
         phone: document.getElementById('formPhone').value.trim(),
         notes: document.getElementById('formNotes').value.trim(),
+        complianceHistory: currentEditingCardId ? vehicles[currentEditingCardId]?.complianceHistory || [] : [],
         createdAt: currentEditingCardId ? vehicles[currentEditingCardId]?.createdAt : new Date().toISOString(),
         updatedAt: new Date().toISOString()
       };
@@ -1237,6 +1690,11 @@
       closeVehicleModal();
       displayVehicleProfile(cardId);
       renderVehiclesList();
+      
+      // Update compliance and revenue after vehicle save
+      displayComplianceData();
+      calculateAndDisplayRevenue();
+      
       showNotification(`Vehicle profile ${currentEditingCardId ? 'updated' : 'added'} successfully`);
     }
 
@@ -1365,6 +1823,8 @@
     // Render records table
     function renderTable() {
       const tbody = document.getElementById('recordsTableBody');
+      const viewAllContainer = document.getElementById('viewAllScansContainer');
+      const viewAllBtn = document.getElementById('viewAllScansBtn');
       
       if (filteredScans.length === 0) {
         tbody.innerHTML = `
@@ -1379,10 +1839,14 @@
             </td>
           </tr>
         `;
+        viewAllContainer.style.display = 'none';
         return;
       }
 
-      tbody.innerHTML = filteredScans.map((scan, index) => {
+      // Show only 5 items if not showing all
+      const scansToShow = showAllScans ? filteredScans : filteredScans.slice(0, 5);
+      
+      tbody.innerHTML = scansToShow.map((scan, index) => {
         const scanCount = cardCounts[scan.cardId] || 1;
         const vehicle = vehicles[scan.cardId];
         return `
@@ -1402,6 +1866,20 @@
           </tr>
         `;
       }).join('');
+
+      // Show/hide "View All" button based on total scans
+      if (filteredScans.length > 5) {
+        viewAllContainer.style.display = 'block';
+        viewAllBtn.textContent = showAllScans ? 'Show Less' : `View All (${filteredScans.length} total)`;
+      } else {
+        viewAllContainer.style.display = 'none';
+      }
+    }
+
+    // Toggle between showing 5 and showing all scans
+    function toggleShowAllScans() {
+      showAllScans = !showAllScans;
+      renderTable();
     }
 
     // Filter records by search term
@@ -1413,8 +1891,12 @@
           scan.timestamp.toLowerCase().includes(searchTerm) ||
           scan.date.toLowerCase().includes(searchTerm)
         );
+        // Reset to show only 5 when filtering
+        showAllScans = false;
       } else {
         filteredScans = [...scans];
+        // Reset to show only 5 when clearing filter
+        showAllScans = false;
       }
       renderTable();
     }
@@ -1485,7 +1967,8 @@
     function isModalOpen() {
       const vehicleModal = document.getElementById('vehicleModal');
       const manageModal = document.getElementById('manageVehiclesModal');
-      return vehicleModal.classList.contains('show') || manageModal.classList.contains('show');
+      const stakeholderModal = document.getElementById('stakeholderModal');
+      return vehicleModal.classList.contains('show') || manageModal.classList.contains('show') || stakeholderModal.classList.contains('show');
     }
 
     function keepInputFocused() {
@@ -1526,6 +2009,419 @@
           input.focus();
         }
       });
+    }
+
+    // Load all new data files
+    async function loadAllData() {
+      await Promise.all([
+        loadSystemActivity(),
+        loadComplianceData(),
+        loadStakeholders(),
+        loadRevenueData()
+      ]);
+    }
+
+    // Load System Activity
+    async function loadSystemActivity() {
+      try {
+        const response = await fetch('data/system-activity.json');
+        if (response.ok) {
+          systemActivity = await response.json();
+          displaySystemActivity();
+        }
+      } catch (error) {
+        console.error('Failed to load system activity:', error);
+      }
+    }
+
+    function displaySystemActivity() {
+      if (!systemActivity) return;
+      document.getElementById('scansToday').textContent = systemActivity.totalScansToday.toLocaleString();
+      document.getElementById('scansThisWeek').textContent = systemActivity.scansThisWeek.toLocaleString();
+      document.getElementById('activeCheckpoints').textContent = systemActivity.activeCheckpoints;
+      document.getElementById('checkpointsOnline').textContent = systemActivity.checkpointUptime.online;
+      document.getElementById('checkpointsOffline').textContent = systemActivity.checkpointUptime.offline;
+      document.getElementById('checkpointUptime').textContent = systemActivity.checkpointUptime.uptimePercentage.toFixed(2) + '%';
+      
+      // Display error logs
+      const logsDiv = document.getElementById('systemErrorLogs');
+      if (systemActivity.errorLogs && systemActivity.errorLogs.length > 0) {
+        logsDiv.innerHTML = systemActivity.errorLogs.slice(0, 5).map(log => `
+          <div style="padding: 8px; margin-bottom: 8px; background: rgba(15, 23, 42, 0.5); border-radius: 6px; border-left: 3px solid ${log.severity === 'error' ? 'var(--danger)' : log.severity === 'warning' ? '#f59e0b' : 'var(--primary)'};">
+            <div style="font-size: 0.75rem; color: var(--text-secondary);">${new Date(log.timestamp).toLocaleString()}</div>
+            <div style="font-size: 0.85rem; margin-top: 4px;">${log.checkpoint}: ${log.message}</div>
+          </div>
+        `).join('');
+      } else {
+        logsDiv.innerHTML = '<div style="color: var(--text-secondary);">No errors</div>';
+      }
+    }
+
+    // Load Compliance Data
+    async function loadComplianceData() {
+      try {
+        const response = await fetch('data/compliance.json');
+        if (response.ok) {
+          complianceData = await response.json();
+          displayComplianceData();
+        }
+      } catch (error) {
+        console.error('Failed to load compliance data:', error);
+      }
+    }
+
+    function displayComplianceData() {
+      // Calculate compliance if data not loaded
+      if (!complianceData) {
+        complianceData = {
+          overallCompliance: 0,
+          totalVehicles: Object.keys(vehicles).length,
+          compliantVehicles: 0,
+          nonCompliantVehicles: 0,
+          nonCompliantList: [],
+          sevenDayTrend: []
+        };
+      }
+      
+      // Update counts
+      complianceData.totalVehicles = Object.keys(vehicles).length;
+      complianceData.nonCompliantVehicles = complianceData.nonCompliantList ? complianceData.nonCompliantList.length : 0;
+      complianceData.compliantVehicles = complianceData.totalVehicles - complianceData.nonCompliantVehicles;
+      complianceData.overallCompliance = complianceData.totalVehicles > 0 
+        ? (complianceData.compliantVehicles / complianceData.totalVehicles) * 100 
+        : 0;
+      
+      document.getElementById('overallCompliance').textContent = complianceData.overallCompliance.toFixed(1) + '%';
+      document.getElementById('totalVehiclesCompliance').textContent = complianceData.totalVehicles.toLocaleString();
+      document.getElementById('compliantVehiclesCount').textContent = complianceData.compliantVehicles.toLocaleString();
+      
+      // Display non-compliant list
+      const listDiv = document.getElementById('nonCompliantList');
+      if (complianceData.nonCompliantList && complianceData.nonCompliantList.length > 0) {
+        listDiv.innerHTML = complianceData.nonCompliantList.map(vehicle => `
+          <div style="padding: 12px; margin-bottom: 8px; background: rgba(239, 68, 68, 0.1); border-left: 3px solid var(--danger); border-radius: 6px;">
+            <div style="font-weight: 600; margin-bottom: 4px;">${vehicle.plate} - ${vehicle.vehicleName}</div>
+            <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 4px;">${vehicle.reason}</div>
+            <div style="font-size: 0.75rem; color: var(--text-secondary);">${vehicle.daysNonCompliant || 0} days non-compliant</div>
+          </div>
+        `).join('');
+      } else {
+        listDiv.innerHTML = '<div style="color: var(--text-secondary);">All vehicles compliant</div>';
+      }
+    }
+
+    // Load Stakeholders
+    async function loadStakeholders() {
+      try {
+        const response = await fetch('data/stakeholders.json');
+        if (response.ok) {
+          const data = await response.json();
+          stakeholders = data.stakeholders || [];
+          displayStakeholders();
+        }
+      } catch (error) {
+        console.error('Failed to load stakeholders:', error);
+      }
+    }
+
+    function displayStakeholders() {
+      const listDiv = document.getElementById('stakeholdersList');
+      if (stakeholders.length === 0) {
+        listDiv.innerHTML = '<div class="no-profile"><p>No stakeholders found</p></div>';
+        return;
+      }
+      
+      listDiv.innerHTML = stakeholders.map(stk => `
+        <div style="background: rgba(15, 23, 42, 0.5); padding: 16px; border-radius: 8px; border: 1px solid var(--border);">
+          <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
+            <div>
+              <div style="font-weight: 600; font-size: 1.1rem; margin-bottom: 4px;">${stk.name}</div>
+              <div style="font-size: 0.85rem; color: var(--text-secondary);">${stk.type.charAt(0).toUpperCase() + stk.type.slice(1)} • ${stk.role}</div>
+            </div>
+            <span style="padding: 4px 8px; background: ${stk.status === 'active' ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)'}; color: ${stk.status === 'active' ? 'var(--success)' : 'var(--danger)'}; border-radius: 4px; font-size: 0.75rem;">
+              ${stk.status}
+            </span>
+          </div>
+          <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 8px;">
+            ${stk.contact.email || 'No email'}
+          </div>
+          <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 12px;">
+            ${stk.contact.phone || 'No phone'}
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-sm btn-secondary" onclick="openEditStakeholder('${stk.id}')">Edit</button>
+            <button class="btn btn-sm btn-danger" onclick="deleteStakeholder('${stk.id}')">Delete</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function filterStakeholders() {
+      const search = document.getElementById('stakeholderSearch').value.toLowerCase();
+      const typeFilter = document.getElementById('stakeholderTypeFilter').value;
+      const filtered = stakeholders.filter(stk => {
+        const matchesSearch = !search || stk.name.toLowerCase().includes(search) || stk.role.toLowerCase().includes(search);
+        const matchesType = !typeFilter || stk.type === typeFilter;
+        return matchesSearch && matchesType;
+      });
+      // Re-render with filtered list
+      const original = stakeholders;
+      stakeholders = filtered;
+      displayStakeholders();
+      stakeholders = original;
+    }
+
+    function openAddStakeholder() {
+      document.getElementById('stakeholderModalTitle').textContent = 'Add Stakeholder';
+      document.getElementById('stakeholderForm').reset();
+      document.getElementById('stakeholderModal').classList.add('show');
+    }
+
+    function openEditStakeholder(id) {
+      const stk = stakeholders.find(s => s.id === id);
+      if (!stk) return;
+      document.getElementById('stakeholderModalTitle').textContent = 'Edit Stakeholder';
+      document.getElementById('stakeholderName').value = stk.name;
+      document.getElementById('stakeholderType').value = stk.type;
+      document.getElementById('stakeholderRole').value = stk.role || '';
+      document.getElementById('stakeholderEmail').value = stk.contact?.email || '';
+      document.getElementById('stakeholderPhone').value = stk.contact?.phone || '';
+      document.getElementById('stakeholderAddress').value = stk.contact?.address || '';
+      document.getElementById('stakeholderContribution').value = stk.contribution || '';
+      document.getElementById('stakeholderModal').setAttribute('data-edit-id', id);
+      document.getElementById('stakeholderModal').classList.add('show');
+    }
+
+    function closeStakeholderModal() {
+      document.getElementById('stakeholderModal').classList.remove('show');
+      document.getElementById('stakeholderModal').removeAttribute('data-edit-id');
+    }
+
+    function saveStakeholder(event) {
+      event.preventDefault();
+      const editId = document.getElementById('stakeholderModal').getAttribute('data-edit-id');
+      const stk = {
+        id: editId || 'stk-' + Date.now(),
+        name: document.getElementById('stakeholderName').value,
+        type: document.getElementById('stakeholderType').value,
+        role: document.getElementById('stakeholderRole').value,
+        contact: {
+          email: document.getElementById('stakeholderEmail').value,
+          phone: document.getElementById('stakeholderPhone').value,
+          address: document.getElementById('stakeholderAddress').value
+        },
+        contribution: document.getElementById('stakeholderContribution').value,
+        status: 'active',
+        createdAt: editId ? stakeholders.find(s => s.id === editId)?.createdAt : new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      
+      if (editId) {
+        const index = stakeholders.findIndex(s => s.id === editId);
+        if (index !== -1) stakeholders[index] = stk;
+      } else {
+        stakeholders.push(stk);
+      }
+      
+      displayStakeholders();
+      closeStakeholderModal();
+      showNotification('Stakeholder saved');
+    }
+
+    function deleteStakeholder(id) {
+      if (confirm('Delete this stakeholder?')) {
+        stakeholders = stakeholders.filter(s => s.id !== id);
+        displayStakeholders();
+        showNotification('Stakeholder deleted');
+      }
+    }
+
+    // Load Revenue Data
+    async function loadRevenueData() {
+      try {
+        const response = await fetch('data/revenue.json');
+        if (response.ok) {
+          revenueData = await response.json();
+          displayRevenueData();
+        }
+      } catch (error) {
+        console.error('Failed to load revenue data:', error);
+      }
+    }
+
+    function displayRevenueData() {
+      if (!revenueData) {
+        calculateAndDisplayRevenue();
+        return;
+      }
+      const formatCurrency = (amount) => '₦' + amount.toLocaleString('en-NG');
+      
+      document.getElementById('currentMonthRevenue').textContent = formatCurrency(revenueData.currentMonth.totalRevenue);
+      document.getElementById('previousMonthRevenue').textContent = formatCurrency(revenueData.previousMonth.totalRevenue);
+      
+      // Calculate revenue based on compliant vehicles
+      calculateAndDisplayRevenue();
+    }
+
+    // Calculate revenue based on compliant vehicles
+    function calculateAndDisplayRevenue() {
+      const formatCurrency = (amount) => '₦' + amount.toLocaleString('en-NG');
+      const FEE_PER_TRIP = 15500;
+      
+      // Count compliant vehicles (vehicles not in non-compliant list)
+      const compliantVehicles = Object.keys(vehicles).filter(cardId => {
+        if (!complianceData || !complianceData.nonCompliantList) return true;
+        return !complianceData.nonCompliantList.find(v => v.cardId === cardId);
+      });
+      
+      const compliantTrips = compliantVehicles.length;
+      const totalRevenue = compliantTrips * FEE_PER_TRIP;
+      
+      // Revenue sharing: Federal 20%, Originating State 50%, Destination State 20%, Tech Partner 10%
+      const federalShare = totalRevenue * 0.20;
+      const originStateShare = totalRevenue * 0.50;
+      const destinationStateShare = totalRevenue * 0.20;
+      const techPartnerShare = totalRevenue * 0.10;
+      
+      // Update display
+      document.getElementById('compliantTripsCount').textContent = compliantTrips;
+      document.getElementById('revenueHaulage').textContent = formatCurrency(totalRevenue);
+      document.getElementById('federalShare').textContent = formatCurrency(federalShare);
+      document.getElementById('originStateShare').textContent = formatCurrency(originStateShare);
+      document.getElementById('destinationStateShare').textContent = formatCurrency(destinationStateShare);
+      document.getElementById('techPartnerShare').textContent = formatCurrency(techPartnerShare);
+      
+      // Update current month revenue
+      document.getElementById('currentMonthRevenue').textContent = formatCurrency(totalRevenue);
+    }
+
+    // Set vehicle compliance status
+    async function setVehicleCompliance(isCompliant) {
+      const btn = event.target;
+      const cardId = btn.getAttribute('data-card-id');
+      if (!cardId) return;
+      
+      const vehicle = vehicles[cardId];
+      if (!vehicle) {
+        alert('Vehicle not found');
+        return;
+      }
+      
+      // Initialize compliance data if needed
+      if (!complianceData) {
+        complianceData = {
+          overallCompliance: 0,
+          totalVehicles: 0,
+          compliantVehicles: 0,
+          nonCompliantVehicles: 0,
+          nonCompliantList: [],
+          sevenDayTrend: []
+        };
+      }
+      
+      // Initialize vehicle compliance history if needed
+      if (!vehicle.complianceHistory) {
+        vehicle.complianceHistory = [];
+      }
+      
+      // Find existing non-compliant entry
+      const nonCompliantIndex = complianceData.nonCompliantList.findIndex(v => v.cardId === cardId);
+      
+      if (isCompliant) {
+        // Remove from non-compliant list
+        if (nonCompliantIndex !== -1) {
+          complianceData.nonCompliantList.splice(nonCompliantIndex, 1);
+        }
+        
+        // Add to compliance history
+        vehicle.complianceHistory.unshift({
+          status: 'compliant',
+          date: new Date().toISOString(),
+          reason: 'Manually marked as compliant'
+        });
+        
+        showNotification('Vehicle marked as compliant');
+      } else {
+        // Add to non-compliant list
+        const reason = prompt('Reason for non-compliance:', 'Outstanding payment');
+        if (reason === null) return; // User cancelled
+        
+        if (nonCompliantIndex !== -1) {
+          complianceData.nonCompliantList[nonCompliantIndex].reason = reason;
+          complianceData.nonCompliantList[nonCompliantIndex].daysNonCompliant = 0;
+          complianceData.nonCompliantList[nonCompliantIndex].lastCompliantDate = new Date().toISOString().split('T')[0];
+        } else {
+          complianceData.nonCompliantList.push({
+            cardId: cardId,
+            plate: vehicle.plate || '-',
+            vehicleName: vehicle.name || 'Unnamed',
+            reason: reason,
+            lastCompliantDate: new Date().toISOString().split('T')[0],
+            daysNonCompliant: 0
+          });
+        }
+        
+        // Add to compliance history
+        vehicle.complianceHistory.unshift({
+          status: 'non-compliant',
+          date: new Date().toISOString(),
+          reason: reason
+        });
+        
+        showNotification('Vehicle marked as non-compliant');
+      }
+      
+      // Update compliance statistics
+      complianceData.totalVehicles = Object.keys(vehicles).length;
+      complianceData.compliantVehicles = complianceData.totalVehicles - complianceData.nonCompliantList.length;
+      complianceData.overallCompliance = complianceData.totalVehicles > 0 
+        ? (complianceData.compliantVehicles / complianceData.totalVehicles) * 100 
+        : 0;
+      
+      // Save vehicle with updated compliance history
+      await saveVehicles();
+      
+      // Update displays
+      displayVehicleProfile(cardId);
+      displayComplianceData();
+      calculateAndDisplayRevenue();
+      
+      // Save compliance data (you might want to add API endpoint for this)
+      try {
+        localStorage.setItem('compliance_data', JSON.stringify(complianceData));
+      } catch (error) {
+        console.error('Failed to save compliance data:', error);
+      }
+    }
+
+    // Load Drivers
+    async function loadDrivers() {
+      try {
+        const response = await fetch('data/drivers.json');
+        if (response.ok) {
+          const data = await response.json();
+          drivers = data.drivers || [];
+          populateDriverDropdown();
+        }
+      } catch (error) {
+        console.error('Failed to load drivers:', error);
+      }
+    }
+
+    function populateDriverDropdown() {
+      const select = document.getElementById('formDriver');
+      if (!select) return;
+      select.innerHTML = '<option value="">Select driver...</option>' + 
+        drivers.map(d => `<option value="${d.id}">${d.name} (${d.licenseNumber})</option>`).join('');
+    }
+
+    async function loadHaulageCompanies() {
+      if (!stakeholders.length) await loadStakeholders();
+      const select = document.getElementById('formHaulage');
+      if (!select) return;
+      const haulageCompanies = stakeholders.filter(s => s.type === 'haulage');
+      select.innerHTML = '<option value="">Select company...</option>' + 
+        haulageCompanies.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
     }
   </script>
 </body>

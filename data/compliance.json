@@ -1,0 +1,59 @@
+{
+  "overallCompliance": 87.5,
+  "totalVehicles": 15420,
+  "compliantVehicles": 13493,
+  "nonCompliantVehicles": 1927,
+  "nonCompliantList": [
+    {
+      "cardId": "300833B2DDD9014000000000",
+      "plate": "ABC-1234",
+      "vehicleName": "Haulage Truck 01",
+      "reason": "Expired haulage permit",
+      "lastCompliantDate": "2024-01-05",
+      "daysNonCompliant": 10
+    },
+    {
+      "cardId": "400944C3EEE0125000000001",
+      "plate": "XYZ-5678",
+      "vehicleName": "Freight Vehicle 02",
+      "reason": "Outstanding payment",
+      "lastCompliantDate": "2024-01-08",
+      "daysNonCompliant": 7
+    },
+    {
+      "cardId": "500155D4FFF0236000000002",
+      "plate": "DEF-9012",
+      "vehicleName": "Transport Unit 03",
+      "reason": "Missing documentation",
+      "lastCompliantDate": "2024-01-10",
+      "daysNonCompliant": 5
+    },
+    {
+      "cardId": "600266E5AAA0347000000003",
+      "plate": "GHI-3456",
+      "vehicleName": "Logistics Truck 04",
+      "reason": "Vehicle inspection overdue",
+      "lastCompliantDate": "2024-01-12",
+      "daysNonCompliant": 3
+    },
+    {
+      "cardId": "700377F6BBB0458000000004",
+      "plate": "JKL-7890",
+      "vehicleName": "Cargo Vehicle 05",
+      "reason": "Insurance expired",
+      "lastCompliantDate": "2024-01-11",
+      "daysNonCompliant": 4
+    }
+  ],
+  "sevenDayTrend": [
+    { "date": "2024-01-09", "compliant": 82.3, "nonCompliant": 17.7 },
+    { "date": "2024-01-10", "compliant": 83.1, "nonCompliant": 16.9 },
+    { "date": "2024-01-11", "compliant": 84.5, "nonCompliant": 15.5 },
+    { "date": "2024-01-12", "compliant": 85.2, "nonCompliant": 14.8 },
+    { "date": "2024-01-13", "compliant": 86.1, "nonCompliant": 13.9 },
+    { "date": "2024-01-14", "compliant": 86.8, "nonCompliant": 13.2 },
+    { "date": "2024-01-15", "compliant": 87.5, "nonCompliant": 12.5 }
+  ],
+  "lastUpdated": "2024-01-15T15:00:00Z"
+}
+

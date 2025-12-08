@@ -1,0 +1,81 @@
+{
+  "drivers": [
+    {
+      "id": "drv-001",
+      "name": "Musa Abdullahi",
+      "licenseNumber": "DL-2023-001234",
+      "phone": "+234-803-111-2222",
+      "email": "musa.abdullahi@email.com",
+      "status": "active",
+      "assignedVehicle": "300833B2DDD9014000000000",
+      "haulageCompany": "ABC Haulage Services Ltd",
+      "licenseExpiry": "2025-06-15",
+      "totalTrips": 342,
+      "complianceRate": 94.5,
+      "createdAt": "2023-01-15T00:00:00Z",
+      "updatedAt": "2024-01-15T10:00:00Z"
+    },
+    {
+      "id": "drv-002",
+      "name": "Chukwu Emeka",
+      "licenseNumber": "DL-2023-002345",
+      "phone": "+234-802-222-3333",
+      "email": "chukwu.emeka@email.com",
+      "status": "active",
+      "assignedVehicle": "400944C3EEE0125000000001",
+      "haulageCompany": "XYZ Logistics Group",
+      "licenseExpiry": "2025-08-20",
+      "totalTrips": 298,
+      "complianceRate": 91.2,
+      "createdAt": "2023-02-10T00:00:00Z",
+      "updatedAt": "2024-01-14T14:30:00Z"
+    },
+    {
+      "id": "drv-003",
+      "name": "Adebayo Olumide",
+      "licenseNumber": "DL-2023-003456",
+      "phone": "+234-805-333-4444",
+      "email": "adebayo.olumide@email.com",
+      "status": "active",
+      "assignedVehicle": "500155D4FFF0236000000002",
+      "haulageCompany": "Premium Freight Services",
+      "licenseExpiry": "2025-03-10",
+      "totalTrips": 415,
+      "complianceRate": 96.8,
+      "createdAt": "2023-01-20T00:00:00Z",
+      "updatedAt": "2024-01-15T09:15:00Z"
+    },
+    {
+      "id": "drv-004",
+      "name": "Ibrahim Mohammed",
+      "licenseNumber": "DL-2023-004567",
+      "phone": "+234-807-444-5555",
+      "email": "ibrahim.mohammed@email.com",
+      "status": "active",
+      "assignedVehicle": "600266E5AAA0347000000003",
+      "haulageCompany": "ABC Haulage Services Ltd",
+      "licenseExpiry": "2025-11-25",
+      "totalTrips": 267,
+      "complianceRate": 89.3,
+      "createdAt": "2023-03-05T00:00:00Z",
+      "updatedAt": "2024-01-13T11:20:00Z"
+    },
+    {
+      "id": "drv-005",
+      "name": "Okafor Nkem",
+      "licenseNumber": "DL-2023-005678",
+      "phone": "+234-809-555-6666",
+      "email": "okafor.nkem@email.com",
+      "status": "active",
+      "assignedVehicle": "700377F6BBB0458000000004",
+      "haulageCompany": "XYZ Logistics Group",
+      "licenseExpiry": "2025-09-30",
+      "totalTrips": 389,
+      "complianceRate": 93.7,
+      "createdAt": "2023-02-15T00:00:00Z",
+      "updatedAt": "2024-01-12T16:45:00Z"
+    }
+  ],
+  "lastUpdated": "2024-01-15T15:00:00Z"
+}
+

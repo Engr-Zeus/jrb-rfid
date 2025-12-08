@@ -1,0 +1,44 @@
+{
+  "currentMonth": {
+    "month": "January 2024",
+    "totalRevenue": 0,
+    "compliantTrips": 0,
+    "feePerTrip": 15500,
+    "federalShare": 0,
+    "originStateShare": 0,
+    "destinationStateShare": 0,
+    "techPartnerShare": 0
+  },
+  "previousMonth": {
+    "month": "December 2023",
+    "totalRevenue": 118000000,
+    "compliantTrips": 7613,
+    "feePerTrip": 15500,
+    "federalShare": 23600000,
+    "originStateShare": 59000000,
+    "destinationStateShare": 23600000,
+    "techPartnerShare": 11800000
+  },
+  "twelveMonthForecast": [
+    { "month": "Jan 2024", "forecast": 125000000, "actual": 125000000 },
+    { "month": "Feb 2024", "forecast": 132000000, "actual": null },
+    { "month": "Mar 2024", "forecast": 140000000, "actual": null },
+    { "month": "Apr 2024", "forecast": 135000000, "actual": null },
+    { "month": "May 2024", "forecast": 145000000, "actual": null },
+    { "month": "Jun 2024", "forecast": 150000000, "actual": null },
+    { "month": "Jul 2024", "forecast": 148000000, "actual": null },
+    { "month": "Aug 2024", "forecast": 155000000, "actual": null },
+    { "month": "Sep 2024", "forecast": 152000000, "actual": null },
+    { "month": "Oct 2024", "forecast": 160000000, "actual": null },
+    { "month": "Nov 2024", "forecast": 158000000, "actual": null },
+    { "month": "Dec 2024", "forecast": 165000000, "actual": null }
+  ],
+  "revenueBreakdown": {
+    "haulageFees": 125000000,
+    "penalties": 2500000,
+    "registrationFees": 500000,
+    "other": 750000
+  },
+  "lastUpdated": "2024-01-15T15:00:00Z"
+}
+
