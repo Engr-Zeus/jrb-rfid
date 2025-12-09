@@ -37,6 +37,47 @@
       margin: 0 auto;
     }
 
+    /* Scan loader overlay */
+    #scanLoader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.55);
+      color: #fff;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 3000;
+      backdrop-filter: blur(2px);
+    }
+
+    #scanLoader .loader-box {
+      background: rgba(15, 23, 42, 0.9);
+      padding: 24px 32px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      font-size: 1rem;
+    }
+
+    #scanLoader .spinner {
+      width: 18px;
+      height: 18px;
+      border: 3px solid rgba(255,255,255,0.3);
+      border-top: 3px solid #60a5fa;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
     header {
       text-align: center;
       margin-bottom: 30px;
@@ -605,6 +646,8 @@
 </head>
 <body>
   <div class="container">
+  <div id="scanLoader"><div class="loader-box"><div class="spinner"></div><div>Loading card data...</div></div></div>
+
     <header>
       <div style="display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 10px;">
         <img src="logo.png" alt="Logo" style="height: 60px; width: auto;" />
@@ -900,68 +943,11 @@
       </div>
     </div>
 
-    <!-- Revenue & Cost-Benefit Panel -->
-    <div class="dashboard">
-      <div class="card">
-        <h2 style="margin-bottom: 16px; font-size: 1.5rem;">Revenue Overview</h2>
-        <div style="margin-bottom: 24px;">
-          <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-            <span style="color: var(--text-secondary);">Current Month:</span>
-            <span style="font-size: 1.5rem; font-weight: bold; color: var(--primary);" id="currentMonthRevenue">₦0</span>
-          </div>
-          <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-            <span style="color: var(--text-secondary);">Previous Month:</span>
-            <span style="font-size: 1.2rem; color: var(--text-primary);" id="previousMonthRevenue">₦0</span>
-          </div>
-          <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border);">
-            <h3 style="font-size: 0.9rem; margin-bottom: 12px; color: var(--text-secondary);">Revenue Distribution (Per Compliant Trip: ₦15,500)</h3>
-            <div style="background: rgba(15, 23, 42, 0.5); padding: 16px; border-radius: 8px;">
-              <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                <span style="color: var(--text-secondary);">Federal Government (20%):</span>
-                <span style="color: var(--success); font-weight: 600;" id="federalShare">₦0</span>
-              </div>
-              <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                <span style="color: var(--text-secondary);">Originating State (50%):</span>
-                <span style="color: var(--primary); font-weight: 600;" id="originStateShare">₦0</span>
-              </div>
-              <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                <span style="color: var(--text-secondary);">Destination State (20%):</span>
-                <span style="color: var(--primary); font-weight: 600;" id="destinationStateShare">₦0</span>
-              </div>
-              <div style="display: flex; justify-content: space-between;">
-                <span style="color: var(--text-secondary);">Tech Partner (10%):</span>
-                <span style="color: var(--primary); font-weight: 600;" id="techPartnerShare">₦0</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div>
-          <h3 style="font-size: 0.9rem; margin-bottom: 12px; color: var(--text-secondary);">Revenue Breakdown</h3>
-          <div style="background: rgba(15, 23, 42, 0.5); padding: 16px; border-radius: 8px;">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-              <span>Compliant Trips:</span>
-              <span id="compliantTripsCount">0</span>
-            </div>
-            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-              <span>Fee per Trip:</span>
-              <span>₦15,500</span>
-            </div>
-            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-              <span>Total Haulage Fees:</span>
-              <span id="revenueHaulage">₦0</span>
-            </div>
-            <div style="display: flex; justify-content: space-between;">
-              <span>Penalties:</span>
-              <span id="revenuePenalties">₦0</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="card">
-        <h2 style="margin-bottom: 16px; font-size: 1.5rem;">12-Month Forecast</h2>
-        <div id="revenueForecastChart" style="height: 300px; display: flex; align-items: center; justify-content: center; background: rgba(15, 23, 42, 0.5); border-radius: 8px; color: var(--text-secondary);">
-          <div>Forecast chart visualization placeholder</div>
-        </div>
+    <!-- Revenue & Cost-Benefit Panel (Embedded Dashboard) -->
+    <div class="card" style="margin-bottom: 20px;">
+      <h2 style="margin-bottom: 16px; font-size: 1.5rem;">Revenue Overview</h2>
+      <div style="display: flex; justify-content: center;">
+        <iframe width="100%" height="100vh" src="https://lookerstudio.google.com/embed/reporting/9e3ca980-3f14-4e87-b1f0-845abc14401c/page/p_raag82ebnd" frameborder="0" style="border:0; border-radius: 12px; overflow: hidden; min-height: 450px;" allowfullscreen sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"></iframe>
       </div>
     </div>
 
@@ -1021,12 +1007,12 @@
           </select>
         </div>
         <div class="form-group">
-          <label for="formOriginState">Originating State *</label>
-          <input type="text" id="formOriginState" required placeholder="e.g., Lagos" />
+          <label for="formStateOperation">State of Operation *</label>
+          <input type="text" id="formStateOperation" required placeholder="e.g., Lagos" />
         </div>
         <div class="form-group">
-          <label for="formDestinationState">Destination State *</label>
-          <input type="text" id="formDestinationState" required placeholder="e.g., Abuja" />
+          <label for="formLgaOperation">Local Government of Operation *</label>
+          <input type="text" id="formLgaOperation" required placeholder="e.g., Ikeja" />
         </div>
         <div class="form-group">
           <label for="formPhoto">Vehicle Photo URL</label>
@@ -1139,6 +1125,12 @@
     let stakeholders = [];
     let revenueData = null;
     let drivers = [];
+    
+    function showScanLoader(show) {
+      const loader = document.getElementById('scanLoader');
+      if (!loader) return;
+      loader.style.display = show ? 'flex' : 'none';
+    }
 
     // Initialize
     document.addEventListener('DOMContentLoaded', async () => {
@@ -1338,6 +1330,7 @@
 
     // Process a scanned card
     async function processScan(cardId) {
+      showScanLoader(true);
       const now = new Date();
       const scan = {
         id: Date.now(),
@@ -1372,49 +1365,53 @@
         }
       }
 
-      // If first time scan, prompt for vehicle registration
-      if (isFirstTime) {
-        showNotification(`First time scan detected: ${cardId}. Please register vehicle.`);
-        setTimeout(() => {
-          openAddVehicle(cardId);
-        }, 500);
-        updateDisplay();
-        return;
-      }
-
-      // For subsequent scans, check compliance and display
-      const vehicle = vehicles[cardId];
-      if (vehicle) {
-        const isCompliant = checkVehicleCompliance(cardId);
-        displayVehicleProfile(cardId);
-        showNotification(`Card scanned: ${cardId} - ${isCompliant ? 'Compliant ✓' : 'Non-Compliant ✗'}`);
-      } else {
-        displayVehicleProfile(cardId);
-        showNotification(`Card scanned: ${cardId}`);
-      }
-
-      // Update display
-      updateDisplay();
-      
-      // Update compliance and revenue after scan
-      displayComplianceData();
-      calculateAndDisplayRevenue();
-
-      // Highlight new row
-      setTimeout(() => {
-        const rows = document.querySelectorAll('#recordsTableBody tr');
-        if (rows.length > 0 && rows[0].classList) {
-          rows[0].classList.add('new-scan');
+      try {
+        // If first time scan, prompt for vehicle registration
+        if (isFirstTime) {
+          showNotification(`First time scan detected: ${cardId}. Please register vehicle.`);
+          setTimeout(() => {
+            openAddVehicle(cardId);
+          }, 500);
+          updateDisplay();
+          return;
         }
-      }, 100);
 
-      // Update filtered scans if search is active
-      const searchTerm = document.getElementById('searchInput').value;
-      if (searchTerm) {
-        filterRecords();
-      } else {
-        filteredScans = [...scans];
-        renderTable();
+        // For subsequent scans, check compliance and display
+        const vehicle = vehicles[cardId];
+        if (vehicle) {
+          const isCompliant = checkVehicleCompliance(cardId);
+          displayVehicleProfile(cardId);
+          showNotification(`Card scanned: ${cardId} - ${isCompliant ? 'Compliant ✓' : 'Non-Compliant ✗'}`);
+        } else {
+          displayVehicleProfile(cardId);
+          showNotification(`Card scanned: ${cardId}`);
+        }
+
+        // Update display
+        updateDisplay();
+        
+        // Update compliance and revenue after scan
+        displayComplianceData();
+        calculateAndDisplayRevenue();
+
+        // Highlight new row
+        setTimeout(() => {
+          const rows = document.querySelectorAll('#recordsTableBody tr');
+          if (rows.length > 0 && rows[0].classList) {
+            rows[0].classList.add('new-scan');
+          }
+        }, 100);
+
+        // Update filtered scans if search is active
+        const searchTerm = document.getElementById('searchInput').value;
+        if (searchTerm) {
+          filterRecords();
+        } else {
+          filteredScans = [...scans];
+          renderTable();
+        }
+      } finally {
+        showScanLoader(false);
       }
     }
 
@@ -1614,8 +1611,8 @@
       document.getElementById('formMakeModel').value = vehicle.makeModel || '';
       document.getElementById('formDriver').value = vehicle.driverId || '';
       document.getElementById('formHaulage').value = vehicle.haulageCompany || '';
-      document.getElementById('formOriginState').value = vehicle.originState || '';
-      document.getElementById('formDestinationState').value = vehicle.destinationState || '';
+      document.getElementById('formStateOperation').value = vehicle.stateOperation || '';
+      document.getElementById('formLgaOperation').value = vehicle.lgaOperation || '';
       document.getElementById('formPhoto').value = vehicle.photo || '';
       document.getElementById('formPhone').value = vehicle.phone || '';
       document.getElementById('formNotes').value = vehicle.notes || '';
@@ -1656,8 +1653,8 @@
         makeModel: document.getElementById('formMakeModel').value.trim(),
         driverId: document.getElementById('formDriver').value,
         haulageCompany: document.getElementById('formHaulage').value,
-        originState: document.getElementById('formOriginState').value.trim(),
-        destinationState: document.getElementById('formDestinationState').value.trim(),
+        stateOperation: document.getElementById('formStateOperation').value.trim(),
+        lgaOperation: document.getElementById('formLgaOperation').value.trim(),
         photo: document.getElementById('formPhoto').value.trim(),
         phone: document.getElementById('formPhone').value.trim(),
         notes: document.getElementById('formNotes').value.trim(),
@@ -2250,14 +2247,19 @@
     }
 
     function displayRevenueData() {
+      // If revenue elements are not present (iframe only), skip
+      const cur = document.getElementById('currentMonthRevenue');
+      const prev = document.getElementById('previousMonthRevenue');
+      if (!cur && !prev) return;
+
       if (!revenueData) {
         calculateAndDisplayRevenue();
         return;
       }
       const formatCurrency = (amount) => '₦' + amount.toLocaleString('en-NG');
       
-      document.getElementById('currentMonthRevenue').textContent = formatCurrency(revenueData.currentMonth.totalRevenue);
-      document.getElementById('previousMonthRevenue').textContent = formatCurrency(revenueData.previousMonth.totalRevenue);
+      if (cur) cur.textContent = formatCurrency(revenueData.currentMonth.totalRevenue || 0);
+      if (prev) prev.textContent = formatCurrency(revenueData.previousMonth.totalRevenue || 0);
       
       // Calculate revenue based on compliant vehicles
       calculateAndDisplayRevenue();
@@ -2268,6 +2270,10 @@
       const formatCurrency = (amount) => '₦' + amount.toLocaleString('en-NG');
       const FEE_PER_TRIP = 15500;
       
+      // If the revenue cards are replaced by an iframe, skip calculations
+      const tripsEl = document.getElementById('compliantTripsCount');
+      if (!tripsEl) return;
+      
       // Count compliant vehicles (vehicles not in non-compliant list)
       const compliantVehicles = Object.keys(vehicles).filter(cardId => {
         if (!complianceData || !complianceData.nonCompliantList) return true;
@@ -2277,22 +2283,26 @@
       const compliantTrips = compliantVehicles.length;
       const totalRevenue = compliantTrips * FEE_PER_TRIP;
       
-      // Revenue sharing: Federal 20%, Originating State 50%, Destination State 20%, Tech Partner 10%
+      // Revenue sharing: Federal 20%, State of Operation 50%, Local Government 20%, Tech Partner 10%
       const federalShare = totalRevenue * 0.20;
       const originStateShare = totalRevenue * 0.50;
       const destinationStateShare = totalRevenue * 0.20;
       const techPartnerShare = totalRevenue * 0.10;
       
-      // Update display
-      document.getElementById('compliantTripsCount').textContent = compliantTrips;
-      document.getElementById('revenueHaulage').textContent = formatCurrency(totalRevenue);
-      document.getElementById('federalShare').textContent = formatCurrency(federalShare);
-      document.getElementById('originStateShare').textContent = formatCurrency(originStateShare);
-      document.getElementById('destinationStateShare').textContent = formatCurrency(destinationStateShare);
-      document.getElementById('techPartnerShare').textContent = formatCurrency(techPartnerShare);
-      
-      // Update current month revenue
-      document.getElementById('currentMonthRevenue').textContent = formatCurrency(totalRevenue);
+      // Update display (guard each element)
+      tripsEl.textContent = compliantTrips;
+      const haulageEl = document.getElementById('revenueHaulage');
+      if (haulageEl) haulageEl.textContent = formatCurrency(totalRevenue);
+      const fedEl = document.getElementById('federalShare');
+      if (fedEl) fedEl.textContent = formatCurrency(federalShare);
+      const orgEl = document.getElementById('originStateShare');
+      if (orgEl) orgEl.textContent = formatCurrency(originStateShare);
+      const destEl = document.getElementById('destinationStateShare');
+      if (destEl) destEl.textContent = formatCurrency(destinationStateShare);
+      const techEl = document.getElementById('techPartnerShare');
+      if (techEl) techEl.textContent = formatCurrency(techPartnerShare);
+      const curRev = document.getElementById('currentMonthRevenue');
+      if (curRev) curRev.textContent = formatCurrency(totalRevenue);
     }
 
     // Set vehicle compliance status
